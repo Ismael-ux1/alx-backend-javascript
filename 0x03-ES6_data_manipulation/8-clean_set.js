@@ -1,11 +1,15 @@
-export default function cleanSet(set, startString) {
-  const arrayFromSet = [...set];
+export default function cleanSet(xSet, xStartString) {
+  if (!xSet || !xStartString || !(xSet instanceof Set) || typeof xStartString !== 'string') {
+    return '';
+  }
 
-  if (startString === '') return arrayFromSet.join('-');
+  const arrayFromSet = Array.from(xSet);
+
+  if (xStartString === '') return arrayFromSet.join('-');
 
   const cleanedValues = arrayFromSet
-    .filter((item) => item.startsWith(startString))
-    .map((item) => item.slice(startString.length));
+    .filter((item) => item && item.startsWith(xStartString))
+    .map((item) => item.replace(xStartString, ''));
 
   return cleanedValues.join('-');
 }
