@@ -6,8 +6,6 @@ process.stdin.on('data', (data) => {
   const input = data.trim();
   if (input !== '') {
     process.stdout.write(`Your name is: ${input}\n`);
-  } else {
-    process.stdout.write('Your name cannot be empty. Please enter your name.\n');
   }
 });
 
