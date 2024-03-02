@@ -27,7 +27,7 @@ async function countStudents(path) {
 
     return studentList;
   } catch (err) {
-    throw new Error('Cannot load the database');
+    return 'Cannot load the database';
   }
 }
 
@@ -36,12 +36,8 @@ const app = http.createServer(async (req, res) => {
   if (req.url === '/') {
     res.end('Hello Holberton School!');
   } else if (req.url === '/students') {
-    try {
-      const studentCount = await countStudents('database.csv');
-      res.end(`This is the list of our students\n${studentCount}`);
-    } catch (err) {
-      res.end(err.message);
-    }
+    const studentCount = await countStudents('database.csv');
+    res.end(`This is the list of our students\n${studentCount}`);
   } else {
     res.end('Page not found');
   }
