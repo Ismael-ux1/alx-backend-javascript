@@ -27,7 +27,7 @@ async function countStudents(path) {
 
     return studentList;
   } catch (err) {
-    return 'Cannot load the database';
+    throw new Error('Cannot load the database');
   }
 }
 
@@ -37,9 +37,14 @@ app.get('/', (req, res) => {
   res.send('Hello Holberton School!');
 });
 
-app.get('/students', async (req, res) => {
-  const studentCount = await countStudents('database.csv');
-  res.send(`This is the list of our students\n${studentCount}`);
+app.get('/students', (req, res) => {
+  countStudents('database.csv')
+    .then((studentCount) => {
+      res.send(`This is the list of our students\n${studentCount}`);
+    })
+    .catch((err) => {
+      res.send(`This is the list of our students\n${err.message}`);
+    });
 });
 
 app.listen(1245);
