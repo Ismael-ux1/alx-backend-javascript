@@ -3,29 +3,31 @@ const fs = require('fs').promises;
 
 async function countStudents(path) {
   try {
-    const data = await fs.readFile(path, 'utf8');
-    const lines = data.split('\n');
-    const students = lines.filter((line) => line).map((line) => line.split(','));
-    const numberOfStudents = students.length;
+    const db = await fs.readFile(path, 'utf8');
+    const students = db.split('\n').filter((line) => line.trim() !== '');
+    const totalStudents = students.length - 1;
 
     const fields = {};
-    for (let i = 0; i < students.length; i += 1) {
-      const field = students[i][3];
-      if (!fields[field]) {
-        fields[field] = [];
+    students.slice(1).forEach((student) => {
+      const [name, , , field] = student.split(',').map((item) => item.trim());
+      if (field) {
+        if (!fields[field]) {
+          fields[field] = [];
+        }
+        fields[field].push(name);
       }
-      fields[field].push(students[i][0]);
+    });
+
+    let studentList = `Number of students: ${totalStudents}\n`;
+    for (const fieldName in fields) {
+      if (Object.prototype.hasOwnProperty.call(fields, fieldName)) {
+        studentList += `Number of students in ${fieldName}: ${fields[fieldName].length}. List: ${fields[fieldName].join(', ')}\n`;
+      }
     }
 
-    let output = `Number of students: ${numberOfStudents}\n`;
-    for (const field in fields) {
-      if (Object.prototype.hasOwnProperty.call(fields, field)) {
-        output += `Number of students in ${field}: ${fields[field].length}. List: ${fields[field].join(', ')}\n`;
-      }
-    }
-    return output;
+    return studentList;
   } catch (err) {
-    throw new Error('Cannot load the database');
+    return 'Cannot load the database';
   }
 }
 
@@ -36,12 +38,8 @@ app.get('/', (req, res) => {
 });
 
 app.get('/students', async (req, res) => {
-  try {
-    const studentCount = await countStudents('database.csv');
-    res.send(`This is the list of our students\n${studentCount}`);
-  } catch (err) {
-    res.send(err.message);
-  }
+  const studentCount = await countStudents('database.csv');
+  res.send(`This is the list of our students\n${studentCount}`);
 });
 
 app.listen(1245);
