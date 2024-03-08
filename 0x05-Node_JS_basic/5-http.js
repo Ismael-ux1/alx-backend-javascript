@@ -25,20 +25,27 @@ async function countStudents(path) {
       }
     }
 
-    return studentList;
+    return { success: true, data: studentList };
   } catch (err) {
     return 'Cannot load the database';
   }
 }
 
 const app = http.createServer(async (req, res) => {
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
   if (req.url === '/') {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end('Hello Holberton School!');
   } else if (req.url === '/students') {
-    const studentCount = await countStudents('database.csv');
-    res.end(`This is the list of our students\n${studentCount}`);
+    const response = await countStudents('database.csv');
+    if (response.success) {
+      res.writeHead(200, { 'Content-Type': 'text/plain' });
+      res.end(`This is the list of our students\n${response.data}`);
+    } else {
+      res.writeHead(500, { 'Content-Type': 'text/plain' });
+      res.end(response.error);
+    }
   } else {
+    res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('Page not found');
   }
 });
