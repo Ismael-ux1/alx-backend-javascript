@@ -33,7 +33,7 @@ class Airport {
     this._code = newCode;
   }
 
-  toString() {
+  get Symbol.toString() {
     return this._code;
   }
 }
