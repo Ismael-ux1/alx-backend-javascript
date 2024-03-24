@@ -1,20 +1,12 @@
-const brand = Symbol('brand');
-const motor = Symbol('motor');
-const color = Symbol('color');
-
 class Car {
   constructor(brand, motor, color) {
-    this[brand] = brand;
-    this[motor] = motor;
-    this[color] = color;
+    this._brand = brand;
+    this._motor = motor;
+    this._color = color;
   }
 
   cloneCar() {
-    const newCar = new Car();
-    newCar[brand] = this[brand];
-    newCar[motor] = this[motor];
-    newCar[color] = this[color];
-    return newCar;
+    return new Car(this._brand, this._motor, this._color);
   }
 }
 
